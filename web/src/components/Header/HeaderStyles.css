@@ -1,0 +1,12 @@
+.header {
+  background-color: transparent;
+  color: black;
+  filter: drop-shadow(4px 3px 3px gray);
+}
+
+.header__links {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  justify-content: space-between;
+}
