@@ -7,6 +7,7 @@ import Login from "./components/Login/Login";
 import ProductsList from "./components/ProductsList/ProductsList";
 import Footer from "./components/Footer/Footer";
 import Search from "./components/Search/Search";
+import Pagination from "react-js-pagination";
 
 function App() {
   return (
@@ -22,6 +23,16 @@ function App() {
             <ProductsList />
             <ProductsList />
             <ProductsList />
+            <Pagination
+              className="pagination"
+              itemClass="page-item"
+              linkClass="page-link"
+              activePage={1}
+              itemsCountPerPage={10}
+              totalItemsCount={450}
+              pageRangeDisplayed={5}
+            />
+
             <Footer />
           </Route>
 
