@@ -10,3 +10,18 @@
   flex-grow: 1;
   justify-content: space-between;
 }
+
+a {
+  border-radius: 12px;
+}
+
+.brandName {
+  padding: 10px;
+}
+.brandName:hover {
+  background-color: #fe4067;
+}
+
+a:hover {
+  background-color: #2189e5;
+}
