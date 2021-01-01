@@ -8,8 +8,19 @@ import ProductsList from "./components/ProductsList/ProductsList";
 import Footer from "./components/Footer/Footer";
 import Search from "./components/Search/Search";
 import Pagination from "react-js-pagination";
+import { useState, useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    setActivePage(1);
+  }, []);
+  const [activePage, setActivePage] = useState();
+
+  const changePagination = (pageNumber) => {
+    console.log(pageNumber);
+    setActivePage(pageNumber);
+  };
+
   return (
     <Router>
       <div className="app">
@@ -27,10 +38,11 @@ function App() {
               className="pagination"
               itemClass="page-item"
               linkClass="page-link"
-              activePage={1}
+              activePage={activePage}
               itemsCountPerPage={10}
               totalItemsCount={450}
-              pageRangeDisplayed={5}
+              onChange={changePagination.bind(this)}
+              pageRangeDisplayed={15}
             />
 
             <Footer />

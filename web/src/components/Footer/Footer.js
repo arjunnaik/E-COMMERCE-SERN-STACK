@@ -36,7 +36,7 @@ function Footer() {
       </div>
       <hr className="container"></hr>
       <div className="container footer__bottom">
-        <p>Copyright © 2017 All Rights Reserved</p>
+        <p>Copyright © 2021 All Rights Reserved</p>
         <div>
           <ul className="footer__social">
             <li>
