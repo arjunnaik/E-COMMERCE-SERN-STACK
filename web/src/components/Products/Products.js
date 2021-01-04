@@ -1,21 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./ProductsStyles.css";
 import { Button } from "react-bootstrap";
+import { useStateValue } from "../../StateProvider";
 
-function Products() {
+function Products(props) {
   return (
     <div className="products container">
       <div className="products__box">
-        <img
-          alt="1"
-          src="https://m.media-amazon.com/images/I/51M5x3DPOHL._AC_SY200_.jpg"
-        />
-        <h4>ASUS G512LV-AZ163T</h4>
+        <img alt={props.prod_id} src={props.prod_img} />
+        <h4>{props.prod_name}</h4>
         <div className="products__desp">
-          <p>
-            <strong>₹69,000</strong>
+          <p style={{ marginBottom: 0 }}>
+            <strong>₹{props.prod_price}</strong>
           </p>
-          <p>⭐⭐⭐⭐</p>
+          <div style={{ display: "flex", margin: 0 }}>
+            {Array(props.prod_rating)
+              .fill()
+              .map((_, i) => (
+                <p style={{ margin: 0 }}>⭐</p>
+              ))}
+          </div>
         </div>
         <Button className="products__addToCart" variant="outline-success">
           Buy Now

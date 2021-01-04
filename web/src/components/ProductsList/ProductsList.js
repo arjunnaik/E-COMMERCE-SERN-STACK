@@ -2,19 +2,22 @@ import React from "react";
 import "./ProductsListStyles.css";
 import { Button } from "react-bootstrap";
 
-function ProductsList() {
+function ProductsList(props) {
   return (
     <div className="productList__poster">
       <div className="productList container">
-        <img
-          alt="1"
-          src="https://m.media-amazon.com/images/I/61dPLkN4poL._AC_UY327_FMwebp_QL65_.jpg"
-        />
+        <img alt={props.prod_id} src={props.prod_img} />
         <div className="productList_details">
-          <h4>Crucial BX500 240GB 3D NAND SATA 2.5-inch SSD</h4>
-          <p>⭐⭐⭐⭐⭐</p>
+          <h4>{props.prod_name}</h4>
+          <div className="product__rating">
+            {Array(props.prod_rating)
+              .fill()
+              .map((_, i) => (
+                <p>⭐</p>
+              ))}
+          </div>
           <p>
-            <strong>₹3000</strong>
+            <strong>₹{props.prod_price}</strong>
           </p>
         </div>
         <div className="productList_buttons">

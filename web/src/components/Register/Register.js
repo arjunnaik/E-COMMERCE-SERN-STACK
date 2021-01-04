@@ -1,37 +1,79 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import "./RegisterStyles.css";
 import { Link } from "react-router-dom";
+import Axios from "axios";
+import { useStateValue } from "../../StateProvider";
 
 function Register() {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [dob, setDob] = useState();
+  const [name, setName] = useState();
+  const [phone, setPhone] = useState();
+  const [{ apiKey }, dispatch] = useStateValue();
+
+  const registerUser = (e) => {
+    Axios.post(`${apiKey}/user_registration`, {
+      name: name,
+      email: email,
+      phone: phone,
+      dob: dob,
+      password: password,
+    })
+      .then((res) => {
+        console.log(res.data.sqlMessage);
+      })
+      .then((err) => {
+        console.log("err", err);
+      })
+      .finally(() => {
+        setEmail("");
+        setPassword("");
+        setDob("");
+        setName("");
+        setPhone("");
+      });
+  };
+
   return (
     <div className="poster">
-      <div class="signup__container">
-        <div class="container__child signup__thumbnail">
-          <div class="thumbnail__logo">
-            <h1 class="logo__text">E-Commerce</h1>
+      <div className="signup__container">
+        <div className="container__child signup__thumbnail">
+          <div className="thumbnail__logo">
+            <h1 className="logo__text">E-Commerce</h1>
           </div>
-          <div class="thumbnail__content">
-            <h1 class="heading--primary">Welcome!</h1>
-            <h2 class="heading--secondary">If you already have account</h2>
+          <div className="thumbnail__content">
+            <h1 className="heading--primary">Welcome!</h1>
+            <h2 className="heading--secondary">If you already have account</h2>
             <div className="button__center">
               <Link to="/user_login">
                 <Button variant="outline-danger">Sign In</Button>
               </Link>
             </div>
           </div>
-          <div class="signup__overlay"></div>
+          <div className="signup__overlay"></div>
         </div>
-        <div class="container__child signup__form">
+        <div className="container__child signup__form">
           <Form>
             <Form.Group>
-              <Form.Label>Username</Form.Label>
-              <Form.Control type="text" placeholder="your username" required />
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                type="text"
+                placeholder="Name"
+                required={true}
+              />
             </Form.Group>
 
             <Form.Group>
               <Form.Label>Email</Form.Label>
               <Form.Control
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 type="email"
                 placeholder="enter your email"
                 required
@@ -39,22 +81,50 @@ function Register() {
             </Form.Group>
 
             <Form.Group>
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                }}
+                type="email"
+                placeholder="enter your phone no"
+                required
+              />
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>Select Date</Form.Label>
+              <Form.Control
+                onChange={(e) => {
+                  setDob(e.target.value);
+                  console.log(e.target.value);
+                }}
+                type="date"
+                name="dob"
+                placeholder="Date Of Birth"
+                required
+              />
+            </Form.Group>
+
+            <Form.Group>
               <Form.Label>Password</Form.Label>
               <Form.Control
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 type="password"
                 placeholder="enter password"
                 required
               />
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="confirm password"
-                required
-              />
-            </Form.Group>
-            <Button className="register__button" variant="info">
+
+            <Button
+              onClick={registerUser}
+              className="register__button"
+              variant="info"
+              type="submit"
+              value="Register"
+            >
               Register
             </Button>
           </Form>

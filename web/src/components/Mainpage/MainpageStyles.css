@@ -1,6 +1,6 @@
 .mainPage {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   margin-left: auto;
   flex-direction: column;
   margin-right: auto;
@@ -22,7 +22,7 @@
 
 .mainpage__latest {
   font-weight: 700;
-  color: gray;
+  color: black;
   z-index: 5;
 }
 
