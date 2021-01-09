@@ -11,7 +11,7 @@ function Login() {
   const [{ apiKey }, dispatch] = useStateValue();
   const history = useHistory();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     Axios.post(`${apiKey}/user_login`, {
       email: email,
@@ -24,6 +24,7 @@ function Login() {
             type: "SET_USER",
             user: res.data?.data[0],
           });
+          localStorage.setItem("user", JSON.stringify(res.data?.data[0]));
           history.replace("/");
         }
       })

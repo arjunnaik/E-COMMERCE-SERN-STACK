@@ -4,7 +4,9 @@ import { Form, Button } from "react-bootstrap";
 import SearchIcon from "@material-ui/icons/Search";
 import { useHistory } from "react-router-dom";
 import { useStateValue } from "../../StateProvider";
+import axios from "axios";
 function Search(props) {
+  const [{ apiKey, products }, dispatch] = useStateValue();
   const history = useHistory();
   const [searchValue, setSearchValue] = useState("");
 
@@ -14,6 +16,23 @@ function Search(props) {
       history.replace(`/products/${searchValue}`);
     } else {
       //write search code here
+
+      if (searchValue.length === 0) {
+        dispatch({
+          type: "SET_PRODUCTS",
+          products: [],
+        });
+      } else {
+        axios
+          .post(`${apiKey}/search_products`, { prodname: searchValue })
+          .then((res) => {
+            console.log(res.data);
+            dispatch({
+              type: "SET_PRODUCTS",
+              products: res.data,
+            });
+          });
+      }
     }
   };
 

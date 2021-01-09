@@ -22,13 +22,14 @@ function Header() {
     dispatch({
       type: "REMOVE_USER",
     });
+    localStorage.removeItem("user");
   };
 
   return (
     <Navbar
       collapseOnSelect
       style={{ zIndex: 5 }}
-      className="parent header"
+      className="parent header container"
       collapseOnSelect
       expand="lg"
       variant="light"
@@ -47,7 +48,7 @@ function Header() {
               <Nav.Link as={NavLink} to="/products">
                 Products
               </Nav.Link>
-              <NavDropdown title={"Categories"}>
+              <NavDropdown alignRight title={"Categories"}>
                 {/* <NavDropdown.Item>Mobiles</NavDropdown.Item>
                 <NavDropdown.Item>Clothing</NavDropdown.Item> */}
                 {categories.map((each) => {
@@ -75,12 +76,13 @@ function Header() {
                 <Nav.Link>
                   Cart <FontAwesomeIcon icon={faShoppingCart} />
                 </Nav.Link>
-                <NavDropdown
-                  title={"User"}
-                  style={{ zIndex: 10, marginRight: 70 }}
-                >
-                  <NavDropdown.Item>{user?.Email}</NavDropdown.Item>
+                <NavDropdown title={"User"}>
+                  <NavDropdown.Item>
+                    Logged in as: <br></br>
+                    <strong>{user?.Name}</strong>
+                  </NavDropdown.Item>
                   <NavDropdown.Item>{user?.Phone}</NavDropdown.Item>
+                  <NavDropdown.Divider></NavDropdown.Divider>
                   <NavDropdown.Divider></NavDropdown.Divider>
                   <NavDropdown.Item onClick={handleLogout}>
                     Logout

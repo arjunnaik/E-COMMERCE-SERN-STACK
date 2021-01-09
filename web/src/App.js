@@ -13,20 +13,50 @@ import { useStateValue } from "./StateProvider";
 import axios from "axios";
 
 function App() {
-  const [{ apiKey }, dispatch] = useStateValue();
+  const [{ apiKey, products }, dispatch] = useStateValue();
   const [productJSON, setProductsJSON] = useState([]);
+  const [totalProducts, setTotalProducts] = useState();
 
   useEffect(() => {
     setActivePage(1);
-    axios.get(`${apiKey}/get_products`).then((res) => {
-      console.log(res.data);
-      setProductsJSON(res.data);
+    const loggedInUser = localStorage.getItem("user");
+    console.log(loggedInUser);
+    if (loggedInUser) {
+      const foundUser = JSON.parse(loggedInUser);
+      dispatch({
+        type: "SET_USER",
+        user: foundUser,
+      });
+    }
+    const productRequest = axios.post(`${apiKey}/get_products`, {
+      page: activePage,
     });
+    const totalProducts = axios.get(`${apiKey}/total_products`);
+
+    axios.all([productRequest, totalProducts]).then(
+      axios.spread((...responses) => {
+        setProductsJSON(responses[0].data);
+        setTotalProducts(responses[1].data);
+      })
+    );
   }, []);
-  const [activePage, setActivePage] = useState();
+
+  useEffect(() => {
+    if (products !== null || products !== undefined) {
+      setProductsJSON(products);
+    }
+  }, [products]);
+  const [activePage, setActivePage] = useState(1);
   const changePagination = (pageNumber) => {
     console.log(pageNumber);
     setActivePage(pageNumber);
+    const newProductRequest = axios
+      .post(`${apiKey}/get_products`, {
+        page: pageNumber,
+      })
+      .then((res) => {
+        setProductsJSON(res.data);
+      });
   };
 
   return (
@@ -37,6 +67,16 @@ function App() {
             <Header />
             <br></br>
             <Search />
+            <Pagination
+              className="pagination"
+              itemClass="page-item"
+              linkClass="page-link"
+              activePage={activePage}
+              itemsCountPerPage={10}
+              totalItemsCount={totalProducts}
+              onChange={changePagination.bind(this)}
+              pageRangeDisplayed={15}
+            />
             {/* <ProductsList />
             <ProductsList />
             <ProductsList />
@@ -62,11 +102,10 @@ function App() {
               linkClass="page-link"
               activePage={activePage}
               itemsCountPerPage={10}
-              totalItemsCount={450}
+              totalItemsCount={totalProducts}
               onChange={changePagination.bind(this)}
               pageRangeDisplayed={15}
             />
-
             <Footer />
           </Route>
 

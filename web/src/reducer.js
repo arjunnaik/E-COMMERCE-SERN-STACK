@@ -2,11 +2,18 @@ export const initialState = {
   basket: [],
   user: null,
   apiKey: "http://localhost:4000",
+  products: [],
 };
 
 const reducer = (state, action) => {
-  console.log(action);
+  console.log(action.products);
   switch (action.type) {
+    case "SET_PRODUCTS":
+      return {
+        ...state,
+        products: action.products,
+      };
+
     case "INSERT_SEARCH":
       return {
         ...state,
