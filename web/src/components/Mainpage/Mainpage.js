@@ -5,12 +5,18 @@ import { Slide } from "react-slideshow-image";
 import Search from "../Search/Search";
 import Products from "../Products/Products";
 import Footer from "../Footer/Footer";
-function Mainpage(props) {
+import axios from "axios";
+import { useStateValue } from "../../StateProvider";
+function Mainpage() {
   const [latestProd, setLatestProd] = useState([]);
+  const [{ apiKey }, dispatch] = useStateValue();
 
   useEffect(() => {
-    setLatestProd(props.latest_prod);
-  }, [props]);
+    axios.get(`${apiKey}/get_latest`).then((res) => {
+      setLatestProd(res.data);
+    });
+  }, []);
+
   const slideImages = [
     "https://images-na.ssl-images-amazon.com/images/G/01/AmazonExports/Events/2021/NYNY/Fuji_TallHero_NYNY_en_US_1x._CB412256579_.jpg",
     "https://images-na.ssl-images-amazon.com/images/G/01/AmazonExports/Fuji/2020/May/Hero/Fuji_TallHero_Computers_1x._CB432469755_.jpg",
@@ -51,13 +57,13 @@ function Mainpage(props) {
             return (
               <Products
                 key={each.Prod_id}
-                prod_id={each.Prod_id}
-                cat_name={each.Categories_name}
-                prod_img={each.Prod_img_url}
-                prod_name={each.Prod_name}
-                prod_price={each.Prod_price}
-                prod_rating={each.Prod_rating}
-                prop_spec={each.Prod_specs}
+                Prod_id={each.Prod_id}
+                Categories_name={each.Categories_name}
+                Prod_img_url={each.Prod_img_url}
+                Prod_name={each.Prod_name}
+                Prod_price={each.Prod_price}
+                Prod_rating={each.Prod_rating}
+                Prod_specs={each.Prod_specs}
               />
             );
           })}

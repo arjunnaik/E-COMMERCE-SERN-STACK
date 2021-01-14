@@ -4,6 +4,7 @@ const express = require("express");
 var cors = require("cors");
 const bodyParser = require("body-parser");
 const { json } = require("body-parser");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 app.use(cors());
@@ -80,14 +81,30 @@ app.get("/total_products", async function (req, res) {
   });
 });
 
+function arrayUnique(array) {
+  var a = array.concat();
+  for (var i = 0; i < a.length; ++i) {
+    for (var j = i + 1; j < a.length; ++j) {
+      if (a[i].Prod_id === a[j].Prod_id) {
+        a.splice(j--, 1);
+      }
+    }
+  }
+
+  return a;
+}
+
 app.post("/search_products", async function (req, res) {
   var prodName = req.body.prodname;
-  var sqlQuery = `SELECT * FROM products WHERE Prod_name LIKE '${prodName}%' ORDER BY Prod_name ASC`;
-  console.log(prodName);
-  pool.query(sqlQuery, (err, result) => {
+  var sqlQuery = `SELECT * FROM products WHERE Prod_name LIKE '${prodName}%' ORDER BY Prod_name ASC; SELECT * FROM products WHERE Prod_name LIKE '%${prodName}%' ORDER BY Prod_name ASC;`;
+  pool.query(sqlQuery, (err, result, fields) => {
     if (result) {
-      console.log(result);
-      res.json(result);
+      var array1 = JSON.stringify(result[0]);
+      var resarray1 = JSON.parse(array1);
+      var array2 = JSON.stringify(result[1]);
+      var resarray2 = JSON.parse(array2);
+      var total_res = arrayUnique(resarray1.concat(resarray2));
+      res.json(total_res);
     }
   });
 });
@@ -115,9 +132,151 @@ app.get("/get_categories", async function (req, res) {
   });
 });
 
+app.get("/get_latest", async function (req, res) {
+  var sqlQuery = `SELECT * FROM products ORDER BY Prod_name ASC LIMIT 4`;
+  pool.query(sqlQuery, (err, result) => {
+    if (result) {
+      console.log(result);
+      res.json(result);
+    }
+  });
+});
+
 app.post("/add_to_cart", async function (req, res) {
-  var prod_id = req.body.prodid;
-  var sqlQuery = `INSERT `;
+  var item = req.body.cartItem;
+  var user = req.body.user;
+  var uuid = req.body.uuid;
+  var sqlQuery = `INSERT INTO Cart(Email, Prod_id, UUID) VALUES(?,?,?)`;
+
+  pool.query(sqlQuery, [user, item, uuid], (err, result) => {
+    if (result) {
+      console.log(result);
+    }
+    if (err) {
+      console.log(err);
+    }
+  });
+});
+
+app.post("/remove_from_cart", async function (req, res) {
+  var item = req.body.cartItem;
+  var user = req.body.user;
+  var uuid = req.body.uuid;
+  console.log(uuid);
+  var sqlQuery = `DELETE FROM Cart WHERE Prod_id=? AND Email=? AND UUID=?`;
+  pool.query(sqlQuery, [item, user, uuid], (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+});
+
+app.post("/get_cart_products", async function (req, res) {
+  var user = req.body.user;
+  var sqlQuery = `select * from products inner join cart on products.prod_id=cart.prod_id where cart.email=?`;
+  pool.query(sqlQuery, [user], (err, result) => {
+    if (result) {
+      result = JSON.stringify(result);
+      result = JSON.parse(result);
+      res.json(result);
+    }
+  });
+});
+
+app.post("/place_orders", async function (req, res) {
+  var user = req.body.user;
+  var basket = req.body.basket;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
+  var address = req.body.address;
+  var city = req.body.city;
+  var state = req.body.state;
+  var pinCode = req.body.pinCode;
+  var phone = req.body.phone;
+  const today = new Date();
+  var order_uuid = uuidv4();
+  var order_total = 0;
+  basket.forEach((each) => {
+    order_total = order_total + each.Prod_price;
+  });
+  console.log(order_total);
+  var addressQuery = `INSERT INTO address(Email,First_name,Last_name,address,city,state,Pincode,Phone) VALUES(?,?,?,?,?,?,?,?)`;
+  pool.query(
+    addressQuery,
+    [user, firstName, lastName, address, city, state, pinCode, phone],
+    (err, result) => {
+      if (result) {
+        console.log(result);
+      }
+      if (err) {
+        console.log(err);
+      }
+    }
+  );
+  basket.forEach((each, index) => {
+    var sqlQuery = `INSERT INTO orders(Order_uuid,Email,Prod_id,Order_date,Order_price) VALUES(?,?,?,?,?)`;
+
+    pool.query(
+      sqlQuery,
+      [order_uuid, user, each.Prod_id, today, order_total],
+      (err, result) => {
+        if (result) {
+          console.log(result);
+        }
+      }
+    );
+    if (basket.length - 1 === index) {
+      var sqlQuery1 = `DELETE FROM CART WHERE email=?`;
+      pool.query(sqlQuery1, [user], (err, result1) => {
+        if (result1) {
+          res.send("Ordered");
+        }
+      });
+    }
+  });
+});
+
+app.post("/recent_orders", async function (req, res) {
+  var user = req.body.user;
+
+  var sqlQuery = `select o.order_id,o.Order_uuid,o.Order_date,o.Order_price, GROUP_CONCAT(DISTINCT p.Prod_name ORDER BY o.order_date DESC) AS prod_names,GROUP_CONCAT(DISTINCT p.Prod_id ORDER BY o.order_date DESC) AS prod_ids,GROUP_CONCAT(DISTINCT p.Prod_img_url ORDER BY o.order_date DESC) AS prod_imgs,GROUP_CONCAT(DISTINCT p.Prod_price ORDER BY o.order_date DESC) AS prod_prices from orders AS o inner join products AS p on 
+  o.prod_id=p.prod_id where o.email=? group by o.order_uuid order by o.order_date DESC`;
+  pool.query(sqlQuery, [user], (err, result) => {
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+
+    result.forEach((each, index) => {
+      result[index].prod_names = each.prod_names.split(",");
+      result[index].prod_ids = each.prod_ids.split(",");
+      result[index].prod_imgs = each.prod_imgs.split(",");
+      result[index].prod_prices = each.prod_prices.split(",");
+      if (result.length - 1 === index) {
+        res.json(result);
+      } else {
+      }
+    });
+  });
+});
+
+app.post("/delete_all_cart", async function (req, res) {
+  var user = req.body.user;
+  console.log(user);
+  var sqlQuery = `DELETE FROM CART WHERE email=?`;
+  pool.query(sqlQuery, [user], (err, result) => {
+    if (result) {
+      res.send("deleted");
+    }
+  });
+});
+
+app.post("/recent_address", async function (req, res) {
+  var user = req.body.user;
+  var sqlQuery = `SELECT * FROM address where email=? ORDER BY address_id DESC LIMIT 1`;
+  pool.query(sqlQuery, [user], (err, result) => {
+    if (result) {
+      res.json(result);
+    }
+  });
 });
 
 app.get("/", (req, res) => {

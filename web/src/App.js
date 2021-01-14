@@ -11,9 +11,12 @@ import Pagination from "react-js-pagination";
 import { useState, useEffect } from "react";
 import { useStateValue } from "./StateProvider";
 import axios from "axios";
+import ShoppingCart from "./components/ShoppingCart/ShoppingCart";
+import Order from "./components/Orders/Order";
+import OrderPlaced from "./components/Orderplaced/OrderPlaced";
 
 function App() {
-  const [{ apiKey, products }, dispatch] = useStateValue();
+  const [{ apiKey, products, user, basket }, dispatch] = useStateValue();
   const [productJSON, setProductsJSON] = useState([]);
   const [totalProducts, setTotalProducts] = useState();
 
@@ -42,6 +45,19 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const cartProducts = axios
+      .post(`${apiKey}/get_cart_products`, {
+        user: user?.Email,
+      })
+      .then((res) => {
+        dispatch({
+          type: "ADD_MULTIPLE_BASKET",
+          basket: res.data,
+        });
+      });
+  }, [user]);
+
+  useEffect(() => {
     if (products !== null || products !== undefined) {
       setProductsJSON(products);
     }
@@ -63,7 +79,15 @@ function App() {
     <Router>
       <div className="app">
         <Switch>
-          <Route path="/products/">
+          <Route path="/user_orders">
+            <Header />
+            <Order />
+          </Route>
+          <Route path="/your_cart">
+            <Header />
+            <ShoppingCart />
+          </Route>
+          <Route path="/products">
             <Header />
             <br></br>
             <Search />
@@ -86,13 +110,13 @@ function App() {
               return (
                 <ProductsList
                   key={each.Prod_id}
-                  prod_id={each.Prod_id}
-                  cat_name={each.Categories_name}
-                  prod_img={each.Prod_img_url}
-                  prod_name={each.Prod_name}
-                  prod_price={each.Prod_price}
-                  prod_rating={each.Prod_rating}
-                  prod_specs={each.Prod_specs}
+                  Prod_id={each.Prod_id}
+                  Categories_name={each.Categories_name}
+                  Prod_img_url={each.Prod_img_url}
+                  Prod_name={each.Prod_name}
+                  Prod_price={each.Prod_price}
+                  Prod_rating={each.Prod_rating}
+                  Prod_specs={each.Prod_specs}
                 />
               );
             })}
@@ -119,9 +143,14 @@ function App() {
             <Register />
           </Route>
 
+          <Route path="/order_placed_page">
+            <Header />
+            <OrderPlaced />
+          </Route>
+
           <Route path="/">
             <Header />
-            <Mainpage latest_prod={productJSON.slice(0, 4)} />
+            <Mainpage />
             <Footer />
           </Route>
         </Switch>

@@ -12,7 +12,7 @@ function Products(props) {
     console.log(props.prod_id);
     axios
       .post(`${apiKey}/add_to_cart`, {
-        prodid: props.prod_id,
+        prodid: props.Prod_id,
       })
       .then((res) => {
         console.log(res);
@@ -25,21 +25,21 @@ function Products(props) {
   return (
     <div className="products container">
       <div className="products__box">
-        <img alt={props.prod_id} src={props.prod_img} />
-        <h4>{props.prod_name}</h4>
+        <img alt={props.Prod_id} src={props.Prod_img_url} />
+        <h4>{props.Prod_name}</h4>
         <div className="products__desp">
           <p style={{ marginBottom: 0 }}>
-            <strong>₹{props.prod_price}</strong>
+            <strong>₹{props.Prod_price}</strong>
           </p>
           <div style={{ display: "flex", margin: 0 }}>
-            {Array(props.prod_rating)
+            {Array(props.Prod_rating)
               .fill()
               .map((_, i) => (
                 <p style={{ margin: 0 }}>⭐</p>
               ))}
           </div>
         </div>
-        <Button className="products__addToCart" variant="outline-success">
+        {/* <Button className="products__addToCart" variant="outline-success">
           Buy Now
         </Button>
         <Button
@@ -48,7 +48,7 @@ function Products(props) {
           variant="outline-primary"
         >
           Add To Cart
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

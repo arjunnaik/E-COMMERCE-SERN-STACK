@@ -1,28 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ProductsListStyles.css";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
+import { useStateValue } from "../../StateProvider";
+import axios from "axios";
+import NumericInput from "react-numeric-input";
+import { v4 as uuidv4 } from "uuid";
 
 function ProductsList(props) {
+  const [{ basket, apiKey, user }, dispatch] = useStateValue();
+  const [quantity, setQuantity] = useState(1);
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    var basketItem = { uuid: uuidv4(), ...props };
+    dispatch({
+      type: "ADD_TO_BASKET",
+      basket: basketItem,
+    });
+    axios
+      .post(`${apiKey}/add_to_cart`, {
+        cartItem: props.Prod_id,
+        uuid: basketItem.uuid,
+        user: user.Email,
+      })
+      .then((res) => {});
+  };
+
   return (
     <div className="productList__poster">
       <div className="productList container">
-        <img alt={props.prod_id} src={props.prod_img} />
+        <img alt={props.Prod_id} src={props.Prod_img_url} />
         <div className="productList_details">
-          <h4>{props.prod_name}</h4>
+          <h4>{props.Prod_name}</h4>
           <div className="product__rating">
-            {Array(props.prod_rating)
+            {Array(props.Prod_rating)
               .fill()
               .map((_, i) => (
                 <p>⭐</p>
               ))}
           </div>
           <p>
-            <strong>₹{props.prod_price}</strong>
+            <strong>₹{props.Prod_price}</strong>
           </p>
         </div>
+
         <div className="productList_buttons">
           <Button variant="outline-success">Buy Now</Button>
-          <Button variant="outline-primary">Add to Cart</Button>
+          <Button variant="outline-primary" onClick={handleAddToCart}>
+            Add to Cart
+          </Button>
         </div>
       </div>
     </div>

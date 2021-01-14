@@ -5,8 +5,16 @@ export const initialState = {
   products: [],
 };
 
+export const CalculateTotal = (basket) => {
+  let sum = 0;
+  basket.map((item) => {
+    sum = sum + parseFloat(item?.Prod_price);
+  });
+  return sum;
+};
+
 const reducer = (state, action) => {
-  console.log(action.products);
+  console.log(action);
   switch (action.type) {
     case "SET_PRODUCTS":
       return {
@@ -23,12 +31,18 @@ const reducer = (state, action) => {
     case "ADD_TO_BASKET":
       return {
         ...state,
-        basket: [...state.basket, action.item],
+        basket: [...state.basket, action.basket],
+      };
+
+    case "ADD_MULTIPLE_BASKET":
+      return {
+        ...state,
+        basket: action.basket,
       };
 
     case "REMOVE_FROM_BASKET":
       const index = state.basket.findIndex(
-        (BasketItem) => BasketItem.id === action.id
+        (BasketItem) => BasketItem.UUID === action.id
       );
       let newBasket = [...state.basket];
       if (index >= 0) {

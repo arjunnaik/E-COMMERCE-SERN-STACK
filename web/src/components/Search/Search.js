@@ -13,7 +13,7 @@ function Search(props) {
   const handleSearch = (e) => {
     e.preventDefault();
     if (props.pageValue === 1) {
-      history.replace(`/products/${searchValue}`);
+      history.replace(`/products`);
     } else {
       //write search code here
 
@@ -38,19 +38,21 @@ function Search(props) {
 
   return (
     <div className="search container">
-      <Form.Control
-        className="search__searchInput"
-        type="text"
-        placeholder="Search"
-        onChange={(e) => setSearchValue(e.target.value)}
-      />
-      <button
-        type="submit"
-        onClick={handleSearch}
-        style={{ background: "none", border: "none" }}
-      >
-        <SearchIcon className="search__searchIcon" />
-      </button>
+      <Form style={{ display: "flex", flexGrow: 1 }}>
+        <Form.Control
+          className="search__searchInput"
+          type="text"
+          placeholder="Search"
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        <button
+          type="submit"
+          onClick={handleSearch}
+          style={{ background: "none", border: "none" }}
+        >
+          <SearchIcon className="search__searchIcon" />
+        </button>
+      </Form>
     </div>
   );
 }

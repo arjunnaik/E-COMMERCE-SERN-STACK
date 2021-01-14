@@ -86,7 +86,7 @@ function Register() {
                 onChange={(e) => {
                   setPhone(e.target.value);
                 }}
-                type="email"
+                type="phone"
                 placeholder="enter your phone no"
                 required
               />

@@ -3,6 +3,11 @@
   padding: 0;
 }
 
+.app {
+  background-color: white;
+  min-height: 100vh;
+}
+
 .pagination {
   display: flex;
   margin: 10px;
