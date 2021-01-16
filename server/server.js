@@ -24,11 +24,11 @@ app.post("/user_registration", async function (req, res) {
 
   var sqlQuery = `INSERT INTO users (Name,DOB,Phone,Email,Password) VALUES (?,?,?,?,?)`;
 
-  pool.query(
-    sqlQuery,
-    [name, dob, phone, email, password],
-    (err, result) => {}
-  );
+  pool.query(sqlQuery, [name, dob, phone, email, password], (err, result) => {
+    if (result) {
+      res.send("Registered!");
+    }
+  });
 });
 
 app.post("/user_login", async function (req, res) {

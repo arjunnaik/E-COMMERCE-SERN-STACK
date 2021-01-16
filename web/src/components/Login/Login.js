@@ -20,7 +20,7 @@ function Login() {
       password: password,
     })
       .then((res) => {
-        console.log(res.data?.data[0]);
+        console.log(res.data);
         if (res.data.status) {
           dispatch({
             type: "SET_USER",

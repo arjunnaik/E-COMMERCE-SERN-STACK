@@ -4,6 +4,8 @@ import "./RegisterStyles.css";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import { useStateValue } from "../../StateProvider";
+import { useHistory } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function Register() {
   const [email, setEmail] = useState();
@@ -12,6 +14,8 @@ function Register() {
   const [name, setName] = useState();
   const [phone, setPhone] = useState();
   const [{ apiKey }, dispatch] = useStateValue();
+  const history = useHistory();
+  const alert = useAlert();
 
   const registerUser = (e) => {
     Axios.post(`${apiKey}/user_registration`, {
@@ -23,6 +27,8 @@ function Register() {
     })
       .then((res) => {
         console.log(res.data.sqlMessage);
+        alert.success("User Registered");
+        history.replace("/user_login");
       })
       .then((err) => {
         console.log("err", err);
@@ -33,6 +39,8 @@ function Register() {
         setDob("");
         setName("");
         setPhone("");
+        alert.success("User Registered");
+        history.replace("/user_login");
       });
   };
 
