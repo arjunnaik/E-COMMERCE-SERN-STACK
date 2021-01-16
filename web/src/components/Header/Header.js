@@ -6,16 +6,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { useStateValue } from "../../StateProvider";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 function Header() {
   const [{ user, apiKey, basket }, dispatch] = useStateValue();
   const [categories, setCategories] = useState([]);
-
+  const history = useHistory();
   useEffect(() => {
     axios.get(`${apiKey}/get_categories`).then((res) => {
       setCategories(res.data);
     });
   }, []);
+
+  const getCategories = (e) => {
+    axios
+      .post(`${apiKey}/get_products_by_category`, {
+        cat_name: categories[e].Categories_name,
+      })
+      .then((res) => {
+        console.log(res.data);
+        history.replace("/products");
+        dispatch({
+          type: "SET_PRODUCTS",
+          products: res.data,
+        });
+      });
+  };
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -53,9 +69,15 @@ function Header() {
                 <NavDropdown alignRight title={"Categories"}>
                   {/* <NavDropdown.Item>Mobiles</NavDropdown.Item>
                 <NavDropdown.Item>Clothing</NavDropdown.Item> */}
-                  {categories.map((each) => {
+                  {categories.map((each, index) => {
                     return (
-                      <NavDropdown.Item>
+                      <NavDropdown.Item
+                        onClick={(e) => {
+                          e.preventDefault();
+                          getCategories(index);
+                        }}
+                        key={each.Categories_name}
+                      >
                         {each.Categories_name}
                       </NavDropdown.Item>
                     );

@@ -35,7 +35,9 @@ function Products(props) {
             {Array(props.Prod_rating)
               .fill()
               .map((_, i) => (
-                <p style={{ margin: 0 }}>⭐</p>
+                <p key={i} style={{ margin: 0 }}>
+                  ⭐
+                </p>
               ))}
           </div>
         </div>

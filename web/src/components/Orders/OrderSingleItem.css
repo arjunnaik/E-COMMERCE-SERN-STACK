@@ -48,7 +48,13 @@
   display: flex;
   justify-content: flex-end;
   background-color: #f6f6f6;
+  align-items: center;
   padding: 30px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+}
+
+.orderSingleItem__address > p {
+  margin: 0;
+  font-size: 14px;
 }

@@ -7,6 +7,7 @@ import CurrencyFormat from "react-currency-format";
 import { CalculateTotal } from "../../reducer";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function ShoppingCart() {
   const [{ basket, apiKey, user }, dispatch] = useStateValue();
@@ -19,6 +20,7 @@ function ShoppingCart() {
   const [phone, setPhone] = useState("");
   const [addressData, setAddressData] = useState();
   const history = useHistory();
+  const alert = useAlert();
 
   useEffect(() => {
     axios
@@ -52,32 +54,36 @@ function ShoppingCart() {
     ) {
     } else {
       e.preventDefault();
-      axios
-        .post(`${apiKey}/place_orders`, {
-          user: user.Email,
-          basket: basket,
-          firstName: firstName,
-          lastName: lastName,
-          address: address,
-          city: city,
-          state: state,
-          pinCode: pinCode,
-          phone: phone,
-        })
-        .then((res) => {
-          if (res) {
-            dispatch({
-              type: "EMPTY_BASKET",
-            });
-            axios
-              .post(`${apiKey}/delete_all_cart`, { user: user?.Email })
-              .then((res) => {
-                if (res) {
-                  history.replace("/order_placed_page");
-                }
+      if (user) {
+        axios
+          .post(`${apiKey}/place_orders`, {
+            user: user.Email,
+            basket: basket,
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            state: state,
+            pinCode: pinCode,
+            phone: phone,
+          })
+          .then((res) => {
+            if (res) {
+              dispatch({
+                type: "EMPTY_BASKET",
               });
-          }
-        });
+              axios
+                .post(`${apiKey}/delete_all_cart`, { user: user?.Email })
+                .then((res) => {
+                  if (res) {
+                    history.replace("/order_placed_page");
+                  }
+                });
+            }
+          });
+      } else {
+        alert.show("Your are not logged in.");
+      }
     }
   };
 

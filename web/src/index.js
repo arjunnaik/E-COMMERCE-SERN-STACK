@@ -5,12 +5,20 @@ import App from "./App";
 import { StateProvider } from "./StateProvider";
 import reportWebVitals from "./reportWebVitals";
 import reducer, { initialState } from "./reducer";
+import { positions, Provider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
 
 ReactDOM.render(
   <React.StrictMode>
-    <StateProvider initialState={initialState} reducer={reducer}>
-      <App />
-    </StateProvider>
+    <Provider
+      template={AlertTemplate}
+      timeout={5000}
+      position={positions.BOTTOM_CENTER}
+    >
+      <StateProvider initialState={initialState} reducer={reducer}>
+        <App />
+      </StateProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

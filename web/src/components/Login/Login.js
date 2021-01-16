@@ -4,12 +4,14 @@ import { Form, Button } from "react-bootstrap";
 import Axios from "axios";
 import { useStateValue } from "../../StateProvider";
 import { useHistory } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [{ apiKey }, dispatch] = useStateValue();
   const history = useHistory();
+  const alert = useAlert();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,6 +28,9 @@ function Login() {
           });
           localStorage.setItem("user", JSON.stringify(res.data?.data[0]));
           history.replace("/");
+        } else {
+          alert.error("User does not exits.");
+          console.log("No user");
         }
       })
       .then((err) => {

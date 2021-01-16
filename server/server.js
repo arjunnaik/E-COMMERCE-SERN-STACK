@@ -24,11 +24,11 @@ app.post("/user_registration", async function (req, res) {
 
   var sqlQuery = `INSERT INTO users (Name,DOB,Phone,Email,Password) VALUES (?,?,?,?,?)`;
 
-  pool.query(sqlQuery, [name, dob, phone, email, password], (err, result) => {
-    console.log(result);
-  });
-
-  console.log(name, email, phone, dob, password);
+  pool.query(
+    sqlQuery,
+    [name, dob, phone, email, password],
+    (err, result) => {}
+  );
 });
 
 app.post("/user_login", async function (req, res) {
@@ -61,7 +61,7 @@ app.post("/get_products", async function (req, res) {
   } else {
     var items = page * 10 - 10;
   }
-  console.log(items);
+
   var sqlQuery = `SELECT * FROM products ORDER BY Prod_name ASC LIMIT ?,10`;
   pool.query(sqlQuery, [items], (err, result) => {
     if (result) {
@@ -136,7 +136,6 @@ app.get("/get_latest", async function (req, res) {
   var sqlQuery = `SELECT * FROM products ORDER BY Prod_name ASC LIMIT 4`;
   pool.query(sqlQuery, (err, result) => {
     if (result) {
-      console.log(result);
       res.json(result);
     }
   });
@@ -150,10 +149,8 @@ app.post("/add_to_cart", async function (req, res) {
 
   pool.query(sqlQuery, [user, item, uuid], (err, result) => {
     if (result) {
-      console.log(result);
     }
     if (err) {
-      console.log(err);
     }
   });
 });
@@ -162,11 +159,10 @@ app.post("/remove_from_cart", async function (req, res) {
   var item = req.body.cartItem;
   var user = req.body.user;
   var uuid = req.body.uuid;
-  console.log(uuid);
+
   var sqlQuery = `DELETE FROM Cart WHERE Prod_id=? AND Email=? AND UUID=?`;
   pool.query(sqlQuery, [item, user, uuid], (err, result) => {
     if (err) {
-      console.log(err);
     }
   });
 });
@@ -199,20 +195,31 @@ app.post("/place_orders", async function (req, res) {
   basket.forEach((each) => {
     order_total = order_total + each.Prod_price;
   });
-  console.log(order_total);
-  var addressQuery = `INSERT INTO address(Email,First_name,Last_name,address,city,state,Pincode,Phone) VALUES(?,?,?,?,?,?,?,?)`;
+
+  var addressQuery = `INSERT INTO address(Email,First_name,Last_name,address,city,state,Pincode,Phone,address_uuid) VALUES(?,?,?,?,?,?,?,?,?)`;
+
   pool.query(
     addressQuery,
-    [user, firstName, lastName, address, city, state, pinCode, phone],
+    [
+      user,
+      firstName,
+      lastName,
+      address,
+      city,
+      state,
+      pinCode,
+      phone,
+      order_uuid,
+    ],
     (err, result) => {
       if (result) {
-        console.log(result);
       }
       if (err) {
         console.log(err);
       }
     }
   );
+
   basket.forEach((each, index) => {
     var sqlQuery = `INSERT INTO orders(Order_uuid,Email,Prod_id,Order_date,Order_price) VALUES(?,?,?,?,?)`;
 
@@ -221,7 +228,6 @@ app.post("/place_orders", async function (req, res) {
       [order_uuid, user, each.Prod_id, today, order_total],
       (err, result) => {
         if (result) {
-          console.log(result);
         }
       }
     );
@@ -239,8 +245,8 @@ app.post("/place_orders", async function (req, res) {
 app.post("/recent_orders", async function (req, res) {
   var user = req.body.user;
 
-  var sqlQuery = `select o.order_id,o.Order_uuid,o.Order_date,o.Order_price, GROUP_CONCAT(DISTINCT p.Prod_name ORDER BY o.order_date DESC) AS prod_names,GROUP_CONCAT(DISTINCT p.Prod_id ORDER BY o.order_date DESC) AS prod_ids,GROUP_CONCAT(DISTINCT p.Prod_img_url ORDER BY o.order_date DESC) AS prod_imgs,GROUP_CONCAT(DISTINCT p.Prod_price ORDER BY o.order_date DESC) AS prod_prices from orders AS o inner join products AS p on 
-  o.prod_id=p.prod_id where o.email=? group by o.order_uuid order by o.order_date DESC`;
+  var sqlQuery = `select o.order_id,o.Order_uuid,o.Order_date,o.Order_price,a.*, GROUP_CONCAT(DISTINCT p.Prod_name ORDER BY o.order_date DESC) AS prod_names,GROUP_CONCAT(DISTINCT p.Prod_id ORDER BY o.order_date DESC) AS prod_ids,GROUP_CONCAT(DISTINCT p.Prod_img_url ORDER BY o.order_date DESC) AS prod_imgs,GROUP_CONCAT(DISTINCT p.Prod_price ORDER BY o.order_date DESC) AS prod_prices from address AS a, orders AS o inner join products AS p on 
+  o.prod_id=p.prod_id where o.email=? and a.address_uuid=o.Order_uuid group by o.order_uuid order by o.order_date DESC`;
   pool.query(sqlQuery, [user], (err, result) => {
     result = JSON.stringify(result);
     result = JSON.parse(result);
@@ -260,7 +266,7 @@ app.post("/recent_orders", async function (req, res) {
 
 app.post("/delete_all_cart", async function (req, res) {
   var user = req.body.user;
-  console.log(user);
+
   var sqlQuery = `DELETE FROM CART WHERE email=?`;
   pool.query(sqlQuery, [user], (err, result) => {
     if (result) {
@@ -269,10 +275,31 @@ app.post("/delete_all_cart", async function (req, res) {
   });
 });
 
+app.post("/cancelOrder", async function (req, res) {
+  var user = req.body.user;
+  var order_uuid = req.body.uuid;
+  var sqlQuery = `DELETE FROM Orders WHERE email=? and Order_uuid=?`;
+  pool.query(sqlQuery, [user, order_uuid], (err, result) => {
+    if (result) {
+      res.send("Order Canclled");
+    }
+  });
+});
+
 app.post("/recent_address", async function (req, res) {
   var user = req.body.user;
   var sqlQuery = `SELECT * FROM address where email=? ORDER BY address_id DESC LIMIT 1`;
   pool.query(sqlQuery, [user], (err, result) => {
+    if (result) {
+      res.json(result);
+    }
+  });
+});
+
+app.post("/get_products_by_category", async function (req, res) {
+  var cat_name = req.body.cat_name;
+  var sqlQuery = `SELECT * FROM products where Categories_name=?`;
+  pool.query(sqlQuery, [cat_name], (err, result) => {
     if (result) {
       res.json(result);
     }

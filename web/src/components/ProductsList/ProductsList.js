@@ -5,10 +5,14 @@ import { useStateValue } from "../../StateProvider";
 import axios from "axios";
 import NumericInput from "react-numeric-input";
 import { v4 as uuidv4 } from "uuid";
+import { useHistory } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function ProductsList(props) {
   const [{ basket, apiKey, user }, dispatch] = useStateValue();
   const [quantity, setQuantity] = useState(1);
+  const history = useHistory();
+  const alert = useAlert();
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -26,6 +30,12 @@ function ProductsList(props) {
       .then((res) => {});
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    alert.show("You Need To Sign In To Purchase!");
+    history.replace("/user_login");
+  };
+
   return (
     <div className="productList__poster">
       <div className="productList container">
@@ -36,7 +46,7 @@ function ProductsList(props) {
             {Array(props.Prod_rating)
               .fill()
               .map((_, i) => (
-                <p>⭐</p>
+                <p key={i}>⭐</p>
               ))}
           </div>
           <p>
@@ -45,10 +55,16 @@ function ProductsList(props) {
         </div>
 
         <div className="productList_buttons">
-          <Button variant="outline-success">Buy Now</Button>
-          <Button variant="outline-primary" onClick={handleAddToCart}>
-            Add to Cart
-          </Button>
+          {/* <Button variant="outline-success">Buy Now</Button> */}
+          {user?.Email ? (
+            <Button variant="outline-primary" onClick={handleAddToCart}>
+              Add to Cart
+            </Button>
+          ) : (
+            <Button variant="outline-primary" onClick={handleLogin}>
+              Add to Cart
+            </Button>
+          )}
         </div>
       </div>
     </div>

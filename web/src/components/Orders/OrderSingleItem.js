@@ -1,12 +1,26 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import { useStateValue } from "../../StateProvider";
 import "./OrderSingleItem.css";
 import moment from "moment";
 import CurrencyFormat from "react-currency-format";
 
 function OrderSingleItem({ order }) {
+  const [{ apiKey, user }, dispatch] = useStateValue();
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    axios
+      .post(`${apiKey}/cancelOrder`, {
+        user: user?.Email,
+        uuid: order.Order_uuid,
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  };
+
   return (
     <div className="ordersingleitem container">
       {console.log(order)}
@@ -27,7 +41,17 @@ function OrderSingleItem({ order }) {
               prefix={"₹"}
             />
           </p>
-          <p>SHIP TO</p>
+          <p>
+            <strong>SHIP TO</strong>
+            <br></br>
+            <div className="orderSingleItem__address">
+              <p>{order?.address}</p>
+              <p>{order?.City}</p>
+              <p>{order?.State}</p>
+              <p>{order?.Pincode}</p>
+              <p>Phone: {order?.Phone}</p>
+            </div>
+          </p>
         </div>
         <p>
           <strong>ORDER ID</strong>
@@ -49,7 +73,7 @@ function OrderSingleItem({ order }) {
             .fill()
             .map((_, i) => {
               return (
-                <tbody>
+                <tbody key={i}>
                   <tr>
                     <td>
                       <img
@@ -79,6 +103,13 @@ function OrderSingleItem({ order }) {
         </Table>
         <hr style={{ margin: 0 }}></hr>
         <div className="container ordersingleitem__main__total">
+          <Button
+            style={{ marginRight: 10 }}
+            onClick={handleCancel}
+            variant="danger"
+          >
+            Cancel Order
+          </Button>
           <strong>Order Has Been Received!</strong>
         </div>
       </div>

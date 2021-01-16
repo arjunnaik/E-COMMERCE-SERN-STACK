@@ -23,7 +23,6 @@ function App() {
   useEffect(() => {
     setActivePage(1);
     const loggedInUser = localStorage.getItem("user");
-    console.log(loggedInUser);
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
       dispatch({
@@ -97,7 +96,7 @@ function App() {
               linkClass="page-link"
               activePage={activePage}
               itemsCountPerPage={10}
-              totalItemsCount={totalProducts}
+              totalItemsCount={totalProducts === undefined ? 10 : totalProducts}
               onChange={changePagination.bind(this)}
               pageRangeDisplayed={15}
             />
@@ -126,7 +125,7 @@ function App() {
               linkClass="page-link"
               activePage={activePage}
               itemsCountPerPage={10}
-              totalItemsCount={totalProducts}
+              totalItemsCount={totalProducts === undefined ? 10 : totalProducts}
               onChange={changePagination.bind(this)}
               pageRangeDisplayed={15}
             />

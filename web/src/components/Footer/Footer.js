@@ -7,6 +7,7 @@ import {
   faGithub,
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -40,7 +41,9 @@ function Footer() {
         <div>
           <ul className="footer__social">
             <li>
-              <FontAwesomeIcon icon={faFacebook} size="2x" />
+              <a href="https://www.facebook.com" target="_blank">
+                <FontAwesomeIcon icon={faFacebook} size="2x" />
+              </a>
             </li>
             <li>
               <FontAwesomeIcon icon={faTwitter} size="2x" />
