@@ -65,6 +65,7 @@ app.post("/get_products", async function (req, res) {
   var sqlQuery = `SELECT * FROM products ORDER BY Prod_name ASC LIMIT ?,10`;
   pool.query(sqlQuery, [items], (err, result) => {
     if (result) {
+      console.log(result);
       res.json(result);
     }
   });
