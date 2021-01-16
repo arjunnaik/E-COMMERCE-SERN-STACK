@@ -189,10 +189,6 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES ('Arjun','2009-01-07',9901448007,'arjun@gmail.com','password'),('adsa','2021-01-13',1234567891,'asdasd','adasd'),('adsa','2021-01-13',1234567891,'asdasda2','adasd'),('sadsa','2021-01-08',1234567891,'asdsa','sadsad'),('adsad','2021-01-05',1234567891,'asdsad@gmail.com','password'),('sadsa','2021-01-08',1234567891,'asdsasa','sadsad'),('sadsa','2021-01-08',1234567891,'asdsasavsa','sadsad'),('Ayush Naik','2000-07-20',9901448007,'ayush13things@gmail.com','password'),('sad','2021-01-07',1234567891,'sad','sadsad'),('asd','2021-01-06',1234567891,'sadasd','awdada'),('asdsa','2021-01-07',1234567891,'sads','asdasd'),('sads','2020-12-29',1234567891,'sdsadsa@gmail.com','password'),('test','2003-05-13',6361525569,'testemail@gmail.com','password');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'mini_project'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -203,4 +199,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-16 23:39:24
+-- Dump completed on 2021-01-16 23:57:41
