@@ -6,7 +6,7 @@ import "./OrderSingleItem.css";
 import moment from "moment";
 import CurrencyFormat from "react-currency-format";
 
-function OrderSingleItem({ order }) {
+function OrderSingleItem({ order, triggerOrderItem }) {
   const [{ apiKey, user }, dispatch] = useStateValue();
 
   const handleCancel = (e) => {
@@ -17,13 +17,12 @@ function OrderSingleItem({ order }) {
         uuid: order.Order_uuid,
       })
       .then((res) => {
-        console.log(res);
+        triggerOrderItem(order.Order_uuid);
       });
   };
 
   return (
     <div className="ordersingleitem container">
-      {console.log(order)}
       <div className="ordersingleitem__gray">
         <div className="ordersingleitem__left">
           <p>

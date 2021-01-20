@@ -27,7 +27,6 @@ function ShoppingCart() {
       .post(`${apiKey}/recent_address`, { user: user?.Email })
       .then((res) => {
         setAddressData(res.data[0]);
-        console.log(addressData);
       });
   }, [user]);
 
@@ -104,7 +103,6 @@ function ShoppingCart() {
               </tr>
             </thead>
             {basket.map((each) => {
-              console.log(each);
               return <ShoppingItem key={each.Prod_id} cartItem={each} />;
             })}
           </Table>

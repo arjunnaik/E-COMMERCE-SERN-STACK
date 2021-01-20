@@ -10,6 +10,10 @@ function Order() {
   const alert = useAlert();
 
   useEffect(() => {
+    getOrder();
+  }, [user]);
+
+  const getOrder = () => {
     axios
       .post(`${apiKey}/recent_orders`, {
         user: user?.Email,
@@ -17,8 +21,7 @@ function Order() {
       .then((res) => {
         setOrders(res.data);
       });
-  }, [user]);
-
+  };
   useEffect(() => {
     let checkUser = setTimeout(() => {
       if (!user) {
@@ -29,6 +32,14 @@ function Order() {
       clearTimeout(checkUser);
     };
   }, [user]);
+
+  const deleteOrder = (uuidOrder) => {
+    getOrder();
+    if (orders.length === 1) {
+      setOrders([]);
+    }
+  };
+
   return (
     <div className="orders container">
       <div>
@@ -38,7 +49,14 @@ function Order() {
         <br></br>
         {console.log(orders)}
         {orders.map((each) => {
-          return <OrderSingleItem key={each.Order_uuid} order={each} />;
+          console.log(each.Order_uuid);
+          return (
+            <OrderSingleItem
+              triggerOrderItem={deleteOrder}
+              key={each.Order_uuid}
+              order={each}
+            />
+          );
         })}
       </div>
     </div>
