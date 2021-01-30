@@ -7,6 +7,8 @@ import { useStateValue } from "../../StateProvider";
 import { useHistory } from "react-router-dom";
 import { useAlert } from "react-alert";
 
+
+
 function Register() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -92,8 +94,9 @@ function Register() {
               <Form.Label>Phone</Form.Label>
               <Form.Control
                 onChange={(e) => {
-                  setPhone(e.target.value);
-                }}
+                setPhone(e.target.value);
+                
+               }}
                 type="phone"
                 placeholder="enter your phone no"
                 required

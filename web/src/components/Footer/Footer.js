@@ -45,14 +45,25 @@ function Footer() {
                 <FontAwesomeIcon icon={faFacebook} size="2x" />
               </a>
             </li>
+
             <li>
-              <FontAwesomeIcon icon={faTwitter} size="2x" />
+            <a href="https://twitter.com" target="_blank">
+                <FontAwesomeIcon icon={faTwitter} size="2x" />
+              </a>
+            </li>
+            
+            <li>
+            <a href="https://github.com" target="_blank">
+            <FontAwesomeIcon icon={faGithub} size="2x" />
+              </a>
+
+              
             </li>
             <li>
-              <FontAwesomeIcon icon={faGithub} size="2x" />
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faLinkedin} size="2x" />
+            <a href="https://www.linkedin.com" target="_blank">
+            <FontAwesomeIcon icon={faLinkedin} size="2x" />
+              </a>
+              
             </li>
           </ul>
         </div>

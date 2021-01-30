@@ -1,7 +1,7 @@
 let config = {
   host: "localhost",
   user: "root",
-  password: "dragon",
+  password: "mysql",
   database: "mini_project",
   multipleStatements: true,
 };
